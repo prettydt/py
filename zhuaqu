@@ -72,3 +72,20 @@ for cq in chengqu.keys():
                 df.to_sql('mydf1', engine, index=False, if_exists='append')
 
                 house_data.to_csv('house_bj2.csv',encoding='gb2312',mode='a', header=False, index=None)
+                
+import matplotlib
+import numpy as np
+import matplotlib
+matplotlib.use("TkAgg")
+from matplotlib import pyplot as plt
+
+
+
+x = np.arange(1, 11)
+y = 2 * x + 5
+plt.title("Matplotlib demo")
+plt.xlabel("x axis caption")
+plt.ylabel("y axis caption")
+plt.plot(x, y)
+plt.show()
+
