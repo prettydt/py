@@ -1,0 +1,6 @@
+import requests
+url = 'http://api.map.baidu.com/geocoder?address=怡海花园&output=json&key=qe9l8zcxLll2W8kuSlfkwBt0S9bkN89Z&callback=showLocation'
+af = requests.get(url)
+print(af.json())
+print(af.json()['result']['location']['lng'])
+print(af.json()['result']['location']['lat'])
