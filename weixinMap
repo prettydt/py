@@ -1,0 +1,61 @@
+Page({
+
+  /**
+   * 页面的初始数据
+   */
+  data: {
+
+    latitude: 39.907716,
+    longitude: 116.397995,
+    markers: [
+      {
+        id: 0,
+        latitude: 39.980043,
+        longitude: 116.250318,
+        // alpha:0,
+        callout: {
+          content: " 厦门思明区政府 \n 12000元/㎡",
+          padding: 10,
+          display: 'ALWAYS',
+          textAlign: 'center',
+          // borderRadius: 10,
+          // borderColor:'#ff0000',
+          // borderWidth: 2,
+        }
+
+      },
+    ],
+    mapWidth: '',
+    mapHeight: ''
+
+  },
+  toaddress: function (e) {
+    console.log(e)
+    var id = e.markerId
+    console.log(id)
+    // wx.openLocation({
+    //   latitude: this.data.markers[id].latitude,
+    //   longitude: this.data.markers[id].longitude,
+    // })
+    wx.navigateTo({
+      url: '/pages/index/index',
+      success: function (res) { },
+      fail: function (res) { },
+      complete: function (res) { },
+    })
+  },
+
+  /**
+   * 生命周期函数--监听页面加载
+   */
+  onLoad: function (options) {
+    var sy = wx.getSystemInfoSync(),
+      mapWidth = sy.windowWidth * 2,
+      mapHeight = sy.windowHeight * 2;
+    this.setData({
+      mapWidth: mapWidth,
+      mapHeight: mapHeight
+    })
+  },
+})
+<map id="myMap" style="width: {{mapWidth}}rpx; height: {{mapHeight}}rpx;" latitude="{{latitude}}" longitude="{{longitude}}" markers="{{markers}}" show-location bindmarkertap="selectMarket" include-points="{{markers}}" bindmarkertap="toaddress"   scale="12"></map>
