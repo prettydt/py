@@ -1,0 +1,65 @@
+//
+//  ViewController.m
+//  OcMeep
+//
+//  Created by dt on 2019/4/1.
+//  Copyright © 2019年 dt. All rights reserved.
+//
+
+#import "ViewController.h"
+#import "grid.h"
+@implementation ViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    NSMutableArray *muArr = [NSMutableArray new];
+
+ 
+    for(int i = 0; i<3 ;i++)
+    {
+        NSMutableArray *arr = [NSMutableArray new];
+
+        for(int j = 0; j<3 ;j++ )
+        {
+           // NSMutableArray *arr = [NSMutableArray new];
+            int ran  = arc4random() % 4;
+            NSString *fi = [NSString stringWithFormat:@"%d",ran];
+            grid *grid1 = [grid new];
+            [arr addObject:grid1];
+        }
+        [muArr addObject:arr];
+    }
+   
+    //生成01
+    int leiNumber = 5;
+    int k = 0;
+    while(k<leiNumber)
+    {
+        int row  = arc4random() % 3;
+        int col  = arc4random() % 3;
+        grid *grid2 = [grid new];
+        grid2 = (grid*)muArr[row][col];
+        if(!grid2.IsLei)
+        {
+            grid2.IsLei = true;
+            k++;
+        }
+    }
+    for (NSMutableArray *arr1 in muArr) {
+        for(grid * arr2 in arr1){
+            NSLog(@"%hhu",arr2.IsLei);
+        }
+    }
+    // Do any additional setup after loading the view.
+}
+
+
+- (void)setRepresentedObject:(id)representedObject {
+    [super setRepresentedObject:representedObject];
+
+    // Update the view, if already loaded.
+}
+    //初始地图 void StartGame() { for (int i = 0; i < RowCount; i++) { for (int j = 0; j < ColCount; j++) { grids[i, j] = new Grid(); //随机向格子中添加雷 grids[i, j].IsLei = Random.Range(1, 11) < 3 ? true : false; //添加可点击按钮作为格子 GameObject grid = Instantiate<GameObject>(gridPrefab); grid.transform.SetParent(gridContainer); //给按钮命名，便于点击的时候检测 grid.name = i.ToString() + "_" + j.ToString(); tiles[i, j] = grid; } } }
+
+
+@end
