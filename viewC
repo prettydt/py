@@ -1,0 +1,212 @@
+
+//
+//  ViewController.h
+//  OcMeep
+//
+//  Created by dt on 2019/4/1.
+//  Copyright © 2019年 dt. All rights reserved.
+//
+
+#import <Cocoa/Cocoa.h>
+
+@interface ViewController : NSViewController
+
+    @property int rowNumber;
+    @property int colNumber;
+    @property int leiNumber;
+    @property NSMutableArray* muArr;
+@end
+
+
+//
+//  ViewController.m
+//  OcMeep
+//
+//  Created by dt on 2019/4/1.
+//  Copyright © 2019年 dt. All rights reserved.
+//
+#import "ViewController.h"
+#import "Grid.h"
+@implementation ViewController
+    
+    
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    //初始的行和列
+    self.rowNumber = 9;
+    self.colNumber = 9;
+    //初始的雷数
+    self.leiNumber = 10;
+    
+    self.muArr = [NSMutableArray new];
+    for (int x= 0; x < self.rowNumber; x++) {
+        NSMutableArray *arr = [NSMutableArray new];
+        for (int y = 0 ; y < self.colNumber; y++) {
+            //生成按钮
+            NSButton *button = [[NSButton alloc]init];
+            button.frame=CGRectMake(0+31*x, 0+31*y, 32, 32);
+            button.title = @"";
+            [button setToolTip:[NSString stringWithFormat:@"%d%d",x,y]];
+            [button setTarget:self];
+            [button setImage:[NSImage imageNamed:@"befor.png"]];
+            [button setAction:@selector(buttonClick:)];
+            [self.view addSubview:button];
+            //把生成的按钮加到grid的属性里面
+            Grid *grid1 = [Grid new];
+            grid1.btn = button;
+            [arr addObject:grid1];
+        }
+        [self.muArr addObject:arr];
+        
+    }
+    
+    //生成雷，算法是，按照雷的总数，random每一个类，知道到了总数，如果重复则进行下一次
+    
+    int k = 0;
+    while(k<self.leiNumber)
+    {
+        int row  = arc4random() % self.rowNumber;
+        int col  = arc4random() % self.colNumber;
+        Grid *grid2 = [Grid new];
+        grid2 = (Grid*)self.muArr[row][col];
+        if(!grid2.IsLei)
+        {
+            grid2.IsLei = true;
+            k++;
+        }
+    }
+    for (NSMutableArray *arr1 in self.muArr) {
+        for(Grid * arr2 in arr1){
+            NSLog(@"hhu%hhu",arr2.IsLei);
+        }
+    }
+    
+    // Do any additional setup after loading the view.
+}
+-(void)rightMouseDown:(NSEvent *)event
+    {
+        NSLog(@"mouse right down");
+    }
+- (IBAction)buttonClick:(id)sender {
+    NSButton *btn = (NSButton *)sender;
+    btn.enabled = false;
+    int row = [[btn.toolTip substringWithRange:NSMakeRange(0, 1)] intValue];
+    int col = [[btn.toolTip substringWithRange:NSMakeRange(1, 1)] intValue];
+
+    
+    Grid *clickGrid = self.muArr[row][col];
+    if(!clickGrid.IsClicked)
+    {
+        clickGrid.IsClicked = true;
+        clickGrid = self.muArr[row][col];
+        if (clickGrid.IsLei) {
+            btn.title = @"😭";
+            return;
+        }
+        NSArray *arrays = @[@[@-1,@-1],@[@-1,@0],@[@-1,@+1],@[@0,@-1],@[@0,@1],@[@1,@0],@[@1,@1],@[@1,@-1]];
+        int count = 0;
+        int x = 0;
+        int y = 0;
+        for (NSArray *array in arrays) {
+            NSLog(@"%@",array);
+            x = row + [array[0] intValue];
+            y = col + [array[1] intValue];
+            if(x >= 0 && x< self.rowNumber && y >= 0 && y < self.colNumber )
+            {
+                Grid *grid = self.muArr[x][y];
+                NSLog(@"grid == %@",grid);
+                if(grid.IsLei)
+                {
+                    count ++;
+                    
+                }
+            }
+        }
+        if(count == 0)
+        {
+            for (NSArray *array1 in arrays)
+            {
+                NSLog(@"A");
+                int x1 = row + [array1[0] intValue];
+                int y1 = col + [array1[1] intValue];
+                if(x1 >= 0 && x1< self.rowNumber && y1 >= 0 && y1 < self.colNumber )
+                {
+                    Grid *grid8 = [Grid new];
+                    grid8 = self.muArr[x1][y1];
+                    
+                    [self buttonClick:grid8.btn];
+                }
+            }
+        }
+            
+        
+        btn.title = [NSString stringWithFormat:@"%d",count];
+    }
+    
+
+}
+    
+- (void)setRepresentedObject:(id)representedObject {
+    [super setRepresentedObject:representedObject];
+    
+    // Update the view, if already loaded.
+}
+
+-(void)recursion:(int) row and:(int) col btn:(NSButton *)btn{
+    Grid *clickGrid = self.muArr[row][col];
+    if(!clickGrid.IsClicked)
+    {
+        clickGrid.IsClicked = true;
+        clickGrid = self.muArr[row][col];
+        if (clickGrid.IsLei) {
+            btn.title = @"😭";
+            return;
+        }
+        NSArray *arrays = @[@[@-1,@-1],@[@-1,@0],@[@-1,@+1],@[@0,@-1],@[@0,@1],@[@1,@0],@[@1,@1],@[@1,@-1]];
+        int count = 0;
+        for (NSArray *array in arrays) {
+            NSLog(@"%@",array);
+            int x = row + [array[0] intValue];
+            int y = col + [array[1] intValue];
+            if(x >= 0 && x< self.rowNumber && y >= 0 && y < self.colNumber )
+            {
+                Grid *grid = self.muArr[x][y];
+                NSLog(@"grid == %@",grid);
+                if(grid.IsLei)
+                {
+                    count ++;
+                }
+                if(count <= 0)
+                {
+                    for (NSArray *array1 in arrays)
+                    {
+                        int x1 = x + [array1[0] intValue];
+                        int y1 = y + [array1[1] intValue];
+                        if(x1 >= 0 && x1< self.rowNumber && y1 >= 0 && y1 < self.colNumber )
+                        {
+                            [self recursion:x1 and:y1 btn:btn];
+                        }
+                    }
+                }
+            }
+        }
+        btn.title = [NSString stringWithFormat:@"%d",count];
+    }
+}
+@end
+
+//实验button的字体是否能变成红色，失败了，暂时搁浅
+
+//NSColor *color = [NSColor blueColor];
+//NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+//[paragraphStyle setAlignment:NSTextAlignmentCenter];
+//NSString *content = btn.title;
+//NSMutableAttributedString *title = [[NSMutableAttributedString alloc] initWithString:btn.title attributes:@{
+//                                                                                                            NSForegroundColorAttributeName: [NSColor redColor],
+//                                                                                                            NSBaselineOffsetAttributeName: @3,
+//                                                                                                            NSParagraphStyleAttributeName: paragraphStyle
+//                                                                                                            }];
+//[btn setAttributedTitle:title];
+//
+//////  btn setTitle:<#(NSString * _Nonnull)#>
+//[btn setImage:[NSImage imageNamed:@"after.png"]];
