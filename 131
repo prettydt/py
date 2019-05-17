@@ -1,3 +1,10 @@
+- (IBAction)press:(id)sender {
+    ViewController *viewController = [NSApplication sharedApplication].mainWindow.contentViewController;
+    [viewController pressBtn];
+    
+}
+
+
 //
 //  ViewController.m
 //  OcMeep
